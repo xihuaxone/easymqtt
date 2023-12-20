@@ -1,7 +1,5 @@
 package com.xihua.easyctl.domain;
 
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-
 public class MRequest {
     private String sourceTopic;
 

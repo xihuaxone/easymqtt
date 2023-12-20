@@ -1,6 +1,5 @@
 package com.xihua.easyctl;
 
-import com.alibaba.fastjson.JSON;
 import com.xihua.easyctl.domain.MRequest;
 import com.xihua.easyctl.domain.MResponse;
 import com.xihua.easyctl.utils.MqttMessageUtil;
