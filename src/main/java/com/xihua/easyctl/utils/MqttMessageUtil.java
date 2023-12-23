@@ -1,7 +1,5 @@
 package com.xihua.easyctl.utils;
 
-import com.xihua.easyctl.domain.MRequest;
-import com.xihua.easyctl.domain.MResponse;
 import com.xihua.easyctl.domain.Message;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
