@@ -1,34 +1,20 @@
 package com.xihua.easyctl.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public class MRequest {
+    private int reqId;
+
     private String sourceTopic;
 
     private String targetTopic;
 
     private byte msgType;
 
+    private String api;
+
     private String[] params;
-
-    public MRequest(String sourceTopic, String targetTopic, byte msgType, String[] params) {
-        this.sourceTopic = sourceTopic;
-        this.targetTopic = targetTopic;
-        this.msgType = msgType;
-        this.params = params;
-    }
-
-    public String getSourceTopic() {
-        return sourceTopic;
-    }
-
-    public String getTargetTopic() {
-        return targetTopic;
-    }
-
-    public byte getMsgType() {
-        return msgType;
-    }
-
-    public String[] getParams() {
-        return params;
-    }
 }

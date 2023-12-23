@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MController {
-    String topic();
-    int qos() default 2;
+public @interface MService {
+    String api();
 }

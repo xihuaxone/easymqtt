@@ -1,39 +1,21 @@
 package com.xihua.easyctl.client;
 
-import com.xihua.easyctl.MqttReceiver;
-import com.xihua.easyctl.MqttSender;
-import com.xihua.easyctl.domain.MRequest;
-import com.xihua.easyctl.domain.MResponse;
+import com.alibaba.fastjson.JSON;
+import com.xihua.easyctl.MClient;
+import com.xihua.easyctl.MqttService;
+import com.xihua.easyctl.domain.Message;
 
 public class ClientMqttTest {
     public static void main(String[] args) throws InterruptedException {
-        Thread threadRev = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                new MqttReceiver("tcp://192.168.1.4:1883", "/cli/1").init();
-            }
-        });
+        MqttService instance = MqttService.getInstance("tcp://192.168.1.4:1883", "/cli/1");
 
-        threadRev.setDaemon(true);
-        threadRev.start();
+        MClient mClient = new MClient("tcp://192.168.1.4:1883", "/cli/1");
 
-        Thread.sleep(1000 * 2);
-
-        {
-            String[] params = new String[2];
-            params[0] = "req";
-            params[1] = "send";
-            MRequest mRequest = new MRequest("/cli/2", "/cli/1", (byte) 1, params);
-            new MqttSender("tcp://192.168.1.4:1883", "/demo").send(mRequest);
-        }
-
-        {
-            String[] params = new String[2];
-            params[0] = "resp";
-            params[1] = "send";
-            MResponse mResponse = new MResponse("/cli/2", "/cli/1", (byte) 1, params);
-            new MqttSender("tcp://192.168.1.4:1883", "/demo").send(mResponse);
-        }
+        String[] params = new String[2];
+        params[0] = "req";
+        params[1] = "send";
+        Message resp = mClient.call("/cli/2", "/hello", params);
+        System.out.println("call response = " + JSON.toJSONString(resp));
 
         while (true) {
 
