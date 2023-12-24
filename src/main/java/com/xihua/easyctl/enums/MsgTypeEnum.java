@@ -1,17 +1,17 @@
 package com.xihua.easyctl.enums;
 
 public enum MsgTypeEnum {
-    REQUEST((byte) 1),
+    REQUEST("1"),
 
-    RESPONSE((byte) 2);
+    RESPONSE("2");
 
-    private final byte msgType;
+    private final String msgType;
 
-    MsgTypeEnum(byte msgType) {
+    MsgTypeEnum(String msgType) {
         this.msgType = msgType;
     }
 
-    public byte getMsgType() {
+    public String getMsgType() {
         return msgType;
     }
 }

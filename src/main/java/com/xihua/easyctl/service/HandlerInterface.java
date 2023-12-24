@@ -1,5 +1,7 @@
 package com.xihua.easyctl.service;
 
+import java.util.List;
+
 public interface HandlerInterface {
-    String[] handle(String[] params);
+    List<String> handle(List<String> params);
 }

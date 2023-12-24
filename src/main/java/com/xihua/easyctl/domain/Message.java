@@ -2,18 +2,26 @@ package com.xihua.easyctl.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
+@org.msgpack.annotation.Message
 public class Message {
-    private final int reqId;
-    private final String sourceTopic;
+    private String reqId;
 
-    private final String targetTopic;
+    private String sourceTopic;
 
-    private final byte msgType;
+    private String targetTopic;
+
+    private String msgType;
 
     private String api;
 
-    private final String[] params;
+    private List<String> params;
 }

@@ -4,6 +4,7 @@ import com.xihua.easyctl.common.ReqFuture;
 import com.xihua.easyctl.domain.Message;
 import com.xihua.easyctl.enums.MsgTypeEnum;
 
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +21,7 @@ public class MClient {
         this.sourceTopic = sourceTopic;
     }
 
-    public Message call(String targetTopic, String api, String[] params) {
+    public Message call(String targetTopic, String api, List<String> params) {
         MqttService service = MqttService.getInstance(brokerHost, sourceTopic);
 
         ReqFuture future = service.send(new Message(generateReqId(), sourceTopic, targetTopic,
@@ -34,7 +35,7 @@ public class MClient {
         }
     }
 
-    private int generateReqId() {
-        return new Random().nextInt(999999999);
+    private String generateReqId() {
+        return String.valueOf(new Random().nextInt(999999999));
     }
 }

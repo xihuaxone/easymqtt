@@ -6,7 +6,7 @@ import com.xihua.easyctl.domain.Message;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestManager {
-    private static final ConcurrentHashMap<Integer, ReqFuture> REQ_MAP = new ConcurrentHashMap<>(100);
+    private static final ConcurrentHashMap<String, ReqFuture> REQ_MAP = new ConcurrentHashMap<>(100);
 
     private void cleanExpired() {
         REQ_MAP.forEach((reqId, reqFuture) -> {
@@ -17,28 +17,28 @@ public class RequestManager {
         });
     }
 
-    public void add(Integer reqId) {
+    public void add(String reqId) {
         if (REQ_MAP.size() > 500) {
             cleanExpired();
         }
         REQ_MAP.put(reqId, new ReqFuture());
     }
 
-    public ReqFuture get(Integer reqId) {
+    public ReqFuture get(String reqId) {
         if (REQ_MAP.size() > 500) {
             cleanExpired();
         }
         return REQ_MAP.getOrDefault(reqId, null);
     }
 
-    public ReqFuture remove(Integer reqId) {
+    public ReqFuture remove(String reqId) {
         if (REQ_MAP.size() > 500) {
             cleanExpired();
         }
         return REQ_MAP.remove(reqId);
     }
 
-    public void updateResult(Integer reqId, Message message) {
+    public void updateResult(String reqId, Message message) {
         if (REQ_MAP.size() > 500) {
             cleanExpired();
         }

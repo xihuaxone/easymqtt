@@ -7,8 +7,7 @@ import com.xihua.easyctl.enums.MsgTypeEnum;
 import com.xihua.easyctl.service.HandlerInterface;
 import org.reflections.Reflections;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class MessageDispatcher {
@@ -40,9 +39,9 @@ public class MessageDispatcher {
     }
 
     public void dispatch(Message message) {
-        if (message.getMsgType() == MsgTypeEnum.REQUEST.getMsgType()) {
+        if (Objects.equals(message.getMsgType(), MsgTypeEnum.REQUEST.getMsgType())) {
             dispatchRequest(message);
-        } else if (message.getMsgType() == MsgTypeEnum.RESPONSE.getMsgType()) {
+        } else if (Objects.equals(message.getMsgType(), MsgTypeEnum.RESPONSE.getMsgType())) {
             dispatchResponse(message);
         }
     }
@@ -55,7 +54,7 @@ public class MessageDispatcher {
             Class<? extends HandlerInterface> handler = HANDLER_MAP.getOrDefault(api, DefaultHandler.class);
             Message response;
             try {
-                String[] respParams = handler.newInstance().handle(message.getParams());
+                List<String> respParams = handler.newInstance().handle(message.getParams());
                 response = new Message(message.getReqId(), message.getTargetTopic(),
                         message.getSourceTopic(), MsgTypeEnum.RESPONSE.getMsgType(), message.getApi(), respParams);
             } catch (InstantiationException | IllegalAccessException e) {
@@ -77,8 +76,8 @@ public class MessageDispatcher {
 
     static class DefaultHandler implements HandlerInterface {
         @Override
-        public String[] handle(String[] params) {
-            return new String[0];
+        public List<String> handle(List<String> params) {
+            return new ArrayList<>(0);
         }
     }
 }

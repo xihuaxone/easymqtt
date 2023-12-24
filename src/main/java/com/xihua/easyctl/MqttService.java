@@ -8,6 +8,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MqttService {
@@ -66,11 +67,11 @@ public class MqttService {
     }
 
     protected ReqFuture send(Message message) {
-        if (message.getMsgType() == MsgTypeEnum.RESPONSE.getMsgType()) {
+        if (Objects.equals(message.getMsgType(), MsgTypeEnum.RESPONSE.getMsgType())) {
             send(MqttMessageUtil.getMqttMessage(message), message.getTargetTopic(), 2);
             return null;
         }
-        if (message.getMsgType() == MsgTypeEnum.REQUEST.getMsgType()) {
+        if (Objects.equals(message.getMsgType(), MsgTypeEnum.REQUEST.getMsgType())) {
             requestManager.add(message.getReqId());
             send(MqttMessageUtil.getMqttMessage(message), message.getTargetTopic(), 2);
             return requestManager.get(message.getReqId());
