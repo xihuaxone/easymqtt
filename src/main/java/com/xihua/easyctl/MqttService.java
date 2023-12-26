@@ -6,6 +6,8 @@ import com.xihua.easyctl.enums.MsgTypeEnum;
 import com.xihua.easyctl.utils.MqttMessageUtil;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Objects;
@@ -17,6 +19,8 @@ public class MqttService {
     private final RequestManager requestManager = new RequestManager();
 
     private static final Map<String, MqttService> INSTANCE_MAP  = new ConcurrentHashMap<>(10);
+
+    private static final Logger logger = LoggerFactory.getLogger(MqttService.class);
 
     private MqttService() {
 
@@ -55,9 +59,9 @@ public class MqttService {
             // 设置回调
             client.setCallback(new MqttReceiverCallback(new MessageDispatcher()));
             // 建立连接
-            System.out.println("Connecting to broker: " + brokerHost);
+            logger.info("Connecting to broker: " + brokerHost);
             client.connect(connOpts);
-            System.out.println("Connected to broker: " + brokerHost);
+            logger.info("Connected to broker: " + brokerHost);
             // 订阅 topic
             client.subscribe(topic, 2);
 
@@ -84,9 +88,9 @@ public class MqttService {
         message.setQos(qos);
         try {
             client.publish(topic, message);
-            System.out.println("Message published");
+            logger.info("Message published");
 //            client.disconnect();
-//            System.out.println("Disconnected");
+//            logger.info("Disconnected");
 //            client.close();
         } catch (MqttException e) {
             throw new RuntimeException(e);

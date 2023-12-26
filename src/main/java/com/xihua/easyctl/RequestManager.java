@@ -2,17 +2,21 @@ package com.xihua.easyctl;
 
 import com.xihua.easyctl.common.ReqFuture;
 import com.xihua.easyctl.domain.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestManager {
     private static final ConcurrentHashMap<String, ReqFuture> REQ_MAP = new ConcurrentHashMap<>(100);
 
+    private static final Logger logger = LoggerFactory.getLogger(RequestManager.class);
+
     private void cleanExpired() {
         REQ_MAP.forEach((reqId, reqFuture) -> {
             if (reqFuture.isExpired()) {
                 REQ_MAP.remove(reqId);
-                System.out.println("reqId = " + reqId + " has been expired. remove");
+                logger.info("reqId = " + reqId + " has been expired. remove");
             }
         });
     }

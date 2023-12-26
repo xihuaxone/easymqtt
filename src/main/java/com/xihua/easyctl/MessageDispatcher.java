@@ -6,6 +6,8 @@ import com.xihua.easyctl.domain.Message;
 import com.xihua.easyctl.enums.MsgTypeEnum;
 import com.xihua.easyctl.service.HandlerInterface;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -19,6 +21,8 @@ public class MessageDispatcher {
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>());
 
+    private static final Logger logger = LoggerFactory.getLogger(MessageDispatcher.class);
+
     static {
         register();
     }
@@ -30,7 +34,7 @@ public class MessageDispatcher {
                     if (anInterface.equals(HandlerInterface.class)) {
                         MService annotation = c.getAnnotation(MService.class);
                         HANDLER_MAP.put(annotation.api(), (Class<? extends HandlerInterface>) c);
-                        System.out.println("api [" + annotation.api() + "] bounded handler [" + c.getName() + "] registered.");
+                        logger.info("api [" + annotation.api() + "] bounded handler [" + c.getName() + "] registered.");
                         break;
                     }
                 }
@@ -47,7 +51,7 @@ public class MessageDispatcher {
     }
 
     private void dispatchRequest(Message message) {
-        System.out.println("request = " + JSON.toJSONString(message));
+        logger.info("request = " + JSON.toJSONString(message));
         String api = message.getApi();
 
         EXECUTOR.submit(() -> {
@@ -60,17 +64,17 @@ public class MessageDispatcher {
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (Throwable e) {
-                System.out.println("handle request error: " + e);
+                logger.error("handle request error: " + e);
                 throw new RuntimeException(e);
             }
 
-            System.out.println("response = " + JSON.toJSONString(response));
+            logger.info("response = " + JSON.toJSONString(response));
             MqttService.getInstance("tcp://192.168.1.4:1883", message.getTargetTopic()).send(response);
         });
     }
 
     private void dispatchResponse(Message message) {
-        System.out.println("response = " + JSON.toJSONString(message));
+        logger.info("response = " + JSON.toJSONString(message));
         requestManager.updateResult(message.getReqId(), message);
     }
 

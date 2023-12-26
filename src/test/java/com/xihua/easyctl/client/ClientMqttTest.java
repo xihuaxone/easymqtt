@@ -19,7 +19,7 @@ public class ClientMqttTest {
         params.add("send");
         Message resp = mClient.call("/test/device1", "/healthcheck", params);
 //        Message resp = mClient.call("/cli/2", "/hello", params);
-        System.out.println("call response = " + JSON.toJSONString(resp));
+        logger.info("call response = " + JSON.toJSONString(resp));
 
         while (true) {
 

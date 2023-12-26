@@ -6,8 +6,12 @@ import com.xihua.easyctl.utils.MqttMessageUtil;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MqttReceiverCallback implements MqttCallback {
+    private static final Logger logger = LoggerFactory.getLogger(MqttReceiverCallback.class);
+
     private final MessageDispatcher messageDispatcher;
 
     public MqttReceiverCallback(MessageDispatcher messageDispatcher) {
@@ -17,7 +21,7 @@ public class MqttReceiverCallback implements MqttCallback {
     // 连接丢失
     @Override
     public void connectionLost(Throwable cause) {
-        System.out.println("connection lost：" + cause.getMessage());
+        logger.info("connection lost：" + cause.getMessage());
     }
 
     //  收到消息
@@ -27,7 +31,7 @@ public class MqttReceiverCallback implements MqttCallback {
         try {
             msg = MqttMessageUtil.getMessage(message, topic);
         } catch (Throwable e) {
-            System.out.println("[" + topic + "] receive unrecognized msg: " + JSON.toJSONString(message.getPayload()));
+            logger.info("[" + topic + "] receive unrecognized msg: " + JSON.toJSONString(message.getPayload()));
             return;
         }
         if (messageDispatcher != null) {
@@ -38,6 +42,6 @@ public class MqttReceiverCallback implements MqttCallback {
     // 消息传递成功
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-        System.out.println("delivery complete");
+        logger.info("delivery complete");
     }
 }

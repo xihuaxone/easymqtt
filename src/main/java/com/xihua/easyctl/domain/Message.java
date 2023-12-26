@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@org.msgpack.annotation.Message
 public class Message {
     private String reqId;
 
