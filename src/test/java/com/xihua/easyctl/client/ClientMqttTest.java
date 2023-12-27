@@ -14,14 +14,14 @@ public class ClientMqttTest {
     private static final Logger logger = LoggerFactory.getLogger(ClientMqttTest.class);
 
     public static void main(String[] args) throws InterruptedException {
-        MqttService instance = MqttService.getInstance("tcp://192.168.1.4:1883", "/cli/1");
+        MqttService instance = MqttService.getInstance("tcp://192.168.1.4:1883", "/cli/2");
 
-        MClient mClient = new MClient("tcp://192.168.1.4:1883", "/cli/1");
+        MClient mClient = new MClient("tcp://192.168.1.4:1883", "/cli/2");
 
         List<String> params = new ArrayList<>();
         params.add("req");
         params.add("send");
-        Message resp = mClient.call("/test/device1", "/healthcheck", params);
+        Message resp = mClient.call("/cli/1", "/hello", params);
 //        Message resp = mClient.call("/cli/2", "/hello", params);
         logger.info("call response = " + JSON.toJSONString(resp));
 

@@ -5,6 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.xihua.easyctl.domain.Message;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class MqttMessageUtil {
     public static MqttMessage getMqttMessage(Message message) {
         return message2MqttMessage(message);
@@ -25,9 +28,9 @@ public class MqttMessageUtil {
     }
 
     private static Message mqttMessage2Message(MqttMessage mqttMessage) {
-        Message message;
-        message = JSON.parseObject(mqttMessage.getPayload(), Message.class);
-        return message;
+        JSONObject json = JSON.parseObject(mqttMessage.getPayload(), JSONObject.class);
+        json.put("params", Arrays.stream(json.getString("params").split(",")).collect(Collectors.toList()));
+        return json.toJavaObject(Message.class);
     }
 //
 //    private static MqttMessage getMqttMessage(int reqId, String sourceTopic, byte msgType, String api, String[] params) {

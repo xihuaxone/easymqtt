@@ -50,6 +50,7 @@ public class MqttService {
         MemoryPersistence persistence = new MemoryPersistence();
         // MQTT 连接选项
         MqttConnectOptions connOpts = new MqttConnectOptions();
+        connOpts.setConnectionTimeout(10);
         // 设置认证信息
 //        connOpts.setUserName("burt");
 //        connOpts.setPassword("burt".toCharArray());
