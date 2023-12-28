@@ -19,12 +19,18 @@ public class MessageDispatcher {
 
     private static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(32, 32,
             0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<Runnable>());
+            new LinkedBlockingQueue<>());
+
+    private final MqttService mqttService;
 
     private static final Logger logger = LoggerFactory.getLogger(MessageDispatcher.class);
 
     static {
         register();
+    }
+
+    protected MessageDispatcher(MqttService mqttService) {
+        this.mqttService = mqttService;
     }
 
     public static void register() {
@@ -69,7 +75,7 @@ public class MessageDispatcher {
             }
 
             logger.info("response = " + JSON.toJSONString(response));
-            MqttService.getInstance("tcp://192.168.1.4:1883", message.getTargetTopic()).send(response);
+            mqttService.send(response);
         });
     }
 

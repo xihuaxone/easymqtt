@@ -3,6 +3,8 @@ package com.xihua.easyctl;
 import com.xihua.easyctl.common.ReqFuture;
 import com.xihua.easyctl.domain.Message;
 import com.xihua.easyctl.enums.MsgTypeEnum;
+import com.xihua.easyctl.exceptions.MWaitResonseException;
+import com.xihua.easyctl.exceptions.MqttServerConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,16 +20,23 @@ public class MClient {
 
     private final String sourceTopic;
 
+    private final MqttService service;
+
     private static final Logger logger = LoggerFactory.getLogger(MClient.class);
 
-    public MClient(String brokerHost, String sourceTopic) {
+    public MClient(String brokerHost, String sourceTopic) throws MqttServerConnectException {
         this.brokerHost = brokerHost;
         this.sourceTopic = sourceTopic;
+        service = MqttService.getInstance(brokerHost, sourceTopic, null, null);
+    }
+
+    public MClient(String brokerHost, String sourceTopic, String username, String password, Object... args) throws MqttServerConnectException {
+        this.brokerHost = brokerHost;
+        this.sourceTopic = sourceTopic;
+        service = MqttService.getInstance(brokerHost, sourceTopic, username, password, args);
     }
 
     public Message call(String targetTopic, String api, List<String> params) {
-        MqttService service = MqttService.getInstance(brokerHost, sourceTopic);
-
         ReqFuture future = service.send(new Message(generateReqId(), sourceTopic, targetTopic,
                 MsgTypeEnum.REQUEST.getMsgType(), api, params));
 
@@ -35,7 +44,7 @@ public class MClient {
             return future.get(1000 * 5, TimeUnit.MILLISECONDS);
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
             logger.error("call remote error: " + e);
-            throw new RuntimeException(e);
+            throw new MWaitResonseException(e);
         }
     }
 

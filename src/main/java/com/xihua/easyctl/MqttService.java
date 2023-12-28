@@ -3,12 +3,14 @@ package com.xihua.easyctl;
 import com.xihua.easyctl.common.ReqFuture;
 import com.xihua.easyctl.domain.Message;
 import com.xihua.easyctl.enums.MsgTypeEnum;
+import com.xihua.easyctl.exceptions.MqttServerConnectException;
 import com.xihua.easyctl.utils.MqttMessageUtil;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,13 +32,13 @@ public class MqttService {
         return brokerHost + topic;
     }
 
-    public static MqttService getInstance(String brokerHost, String topic) {
+    protected static MqttService getInstance(String brokerHost, String topic, @Nullable String username, @Nullable String password, Object... args) throws MqttServerConnectException {
         String key = getKey(brokerHost, topic);
         if (!INSTANCE_MAP.containsKey(key)) {
             synchronized (MqttService.class) {
                 if (!INSTANCE_MAP.containsKey(key)) {
                     MqttService instance = new MqttService();
-                    instance.init(brokerHost, topic);
+                    instance.init(brokerHost, topic, username, password);
                     INSTANCE_MAP.put(key, instance);
                 }
             }
@@ -44,21 +46,22 @@ public class MqttService {
         return INSTANCE_MAP.get(key);
     }
 
-    private void init(String brokerHost, String topic) {
-
+    private void init(String brokerHost, String topic, @Nullable String username, @Nullable String password, Object... args) throws MqttServerConnectException {
         //  持久化
         MemoryPersistence persistence = new MemoryPersistence();
-        // MQTT 连接选项
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setConnectionTimeout(10);
-        // 设置认证信息
-//        connOpts.setUserName("burt");
-//        connOpts.setPassword("burt".toCharArray());
+        if (username != null) {
+            connOpts.setUserName(username);
+        }
+        if (password != null) {
+            connOpts.setPassword(password.toCharArray());
+        }
 
         try {
             client = new MqttClient(brokerHost, MqttClient.generateClientId(), persistence);
             // 设置回调
-            client.setCallback(new MqttReceiverCallback(new MessageDispatcher()));
+            client.setCallback(new MqttReceiverCallback(new MessageDispatcher(this)));
             // 建立连接
             logger.info("Connecting to broker: " + brokerHost);
             client.connect(connOpts);
@@ -67,7 +70,7 @@ public class MqttService {
             client.subscribe(topic, 2);
 
         } catch (MqttException e) {
-            throw new RuntimeException(e);
+            throw new MqttServerConnectException(e);
         }
     }
 
