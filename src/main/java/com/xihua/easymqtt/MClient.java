@@ -1,10 +1,11 @@
-package com.xihua.easyctl;
+package com.xihua.easymqtt;
 
-import com.xihua.easyctl.common.ReqFuture;
-import com.xihua.easyctl.domain.Message;
-import com.xihua.easyctl.enums.MsgTypeEnum;
-import com.xihua.easyctl.exceptions.MWaitResonseException;
-import com.xihua.easyctl.exceptions.MqttServerConnectException;
+import com.xihua.easymqtt.common.ReqFuture;
+import com.xihua.easymqtt.domain.Message;
+import com.xihua.easymqtt.enums.MsgTypeEnum;
+import com.xihua.easymqtt.exceptions.MWaitResonseException;
+import com.xihua.easymqtt.exceptions.MqttServerConnectException;
+import com.xihua.easymqtt.service.HandlerInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,11 @@ public class MClient {
         this.brokerHost = brokerHost;
         this.sourceTopic = sourceTopic;
         service = MqttService.getInstance(brokerHost, sourceTopic, username, password, args);
+    }
+
+    public MClient registerHandler(Class<? extends HandlerInterface> handlerClass) {
+        service.registerHandler(handlerClass);
+        return this;
     }
 
     public Message call(String targetTopic, String api, List<String> params) {

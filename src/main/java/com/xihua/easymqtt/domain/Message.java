@@ -1,4 +1,4 @@
-package com.xihua.easyctl.domain;
+package com.xihua.easymqtt.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

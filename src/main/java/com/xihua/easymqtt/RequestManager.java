@@ -1,7 +1,7 @@
-package com.xihua.easyctl;
+package com.xihua.easymqtt;
 
-import com.xihua.easyctl.common.ReqFuture;
-import com.xihua.easyctl.domain.Message;
+import com.xihua.easymqtt.common.ReqFuture;
+import com.xihua.easymqtt.domain.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

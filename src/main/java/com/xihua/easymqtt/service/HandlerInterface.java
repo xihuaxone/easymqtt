@@ -1,4 +1,4 @@
-package com.xihua.easyctl.service;
+package com.xihua.easymqtt.service;
 
 import java.util.List;
 

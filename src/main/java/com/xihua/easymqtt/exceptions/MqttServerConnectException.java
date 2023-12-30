@@ -1,6 +1,4 @@
-package com.xihua.easyctl.exceptions;
-
-import org.eclipse.paho.client.mqttv3.MqttException;
+package com.xihua.easymqtt.exceptions;
 
 public class MqttServerConnectException extends Exception {
     public MqttServerConnectException() {

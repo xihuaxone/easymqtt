@@ -1,9 +1,9 @@
-package com.xihua.easyctl.client;
+package com.xihua.easymqtt.client;
 
 import com.alibaba.fastjson.JSON;
-import com.xihua.easyctl.MClient;
-import com.xihua.easyctl.domain.Message;
-import com.xihua.easyctl.exceptions.MqttServerConnectException;
+import com.xihua.easymqtt.MClient;
+import com.xihua.easymqtt.domain.Message;
+import com.xihua.easymqtt.exceptions.MqttServerConnectException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +17,12 @@ public class ClientMqttTest {
     @Test
     public void test() throws MqttServerConnectException {
         logger.info("start...");
-        MClient mClient = new MClient("tcp://192.168.1.4:1883", "/cli/1", "usr", "pwd");
+        MClient mClient = new MClient("tcp://192.168.1.4:1883", "/cli/1", "root", "13241324");
 
         List<String> params = new ArrayList<>();
         params.add("req");
         params.add("send");
-        Message resp = mClient.call("/cli/2", "/hello", params);
+        Message resp = mClient.call("/cli/2", "/test", params);
         logger.info("call response = " + JSON.toJSONString(resp));
 
         while (true) {

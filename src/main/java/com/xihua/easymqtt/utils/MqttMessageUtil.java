@@ -1,8 +1,8 @@
-package com.xihua.easyctl.utils;
+package com.xihua.easymqtt.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.xihua.easyctl.domain.Message;
+import com.xihua.easymqtt.domain.Message;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.Arrays;

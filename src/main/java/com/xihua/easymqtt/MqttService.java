@@ -1,10 +1,11 @@
-package com.xihua.easyctl;
+package com.xihua.easymqtt;
 
-import com.xihua.easyctl.common.ReqFuture;
-import com.xihua.easyctl.domain.Message;
-import com.xihua.easyctl.enums.MsgTypeEnum;
-import com.xihua.easyctl.exceptions.MqttServerConnectException;
-import com.xihua.easyctl.utils.MqttMessageUtil;
+import com.xihua.easymqtt.common.ReqFuture;
+import com.xihua.easymqtt.domain.Message;
+import com.xihua.easymqtt.enums.MsgTypeEnum;
+import com.xihua.easymqtt.exceptions.MqttServerConnectException;
+import com.xihua.easymqtt.service.HandlerInterface;
+import com.xihua.easymqtt.utils.MqttMessageUtil;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ public class MqttService {
     private MqttClient client;
 
     private final RequestManager requestManager = new RequestManager();
+
+    private final MessageDispatcher dispatcher = new MessageDispatcher(this);
 
     private static final Map<String, MqttService> INSTANCE_MAP  = new ConcurrentHashMap<>(10);
 
@@ -46,6 +49,10 @@ public class MqttService {
         return INSTANCE_MAP.get(key);
     }
 
+    public void registerHandler(Class<? extends HandlerInterface> handlerClass) {
+        dispatcher.register(handlerClass);
+    }
+
     private void init(String brokerHost, String topic, @Nullable String username, @Nullable String password, Object... args) throws MqttServerConnectException {
         //  持久化
         MemoryPersistence persistence = new MemoryPersistence();
@@ -61,7 +68,7 @@ public class MqttService {
         try {
             client = new MqttClient(brokerHost, MqttClient.generateClientId(), persistence);
             // 设置回调
-            client.setCallback(new MqttReceiverCallback(new MessageDispatcher(this)));
+            client.setCallback(new MqttReceiverCallback(dispatcher));
             // 建立连接
             logger.info("Connecting to broker: " + brokerHost);
             client.connect(connOpts);

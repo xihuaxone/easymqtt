@@ -1,4 +1,4 @@
-package com.xihua.easyctl.annocation;
+package com.xihua.easymqtt.annocation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,16 +1,17 @@
-package com.xihua.easyctl;
+package com.xihua.easymqtt;
 
 import com.alibaba.fastjson.JSON;
-import com.xihua.easyctl.annocation.MService;
-import com.xihua.easyctl.domain.Message;
-import com.xihua.easyctl.enums.MsgTypeEnum;
-import com.xihua.easyctl.service.HandlerInterface;
+import com.xihua.easymqtt.annocation.MService;
+import com.xihua.easymqtt.domain.Message;
+import com.xihua.easymqtt.enums.MsgTypeEnum;
+import com.xihua.easymqtt.service.HandlerInterface;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 
 public class MessageDispatcher {
     private final RequestManager requestManager = new RequestManager();
@@ -25,16 +26,19 @@ public class MessageDispatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageDispatcher.class);
 
-    static {
-        register();
-    }
-
     protected MessageDispatcher(MqttService mqttService) {
         this.mqttService = mqttService;
+        // android环境不自动注册handler；
+        if (!System.getProperty("os.name").toLowerCase().contains("android")) {
+            register();
+        }
     }
 
-    public static void register() {
-        for (Class<?> c : new Reflections("com.xihua.easyctl.service").getTypesAnnotatedWith(MService.class)) {
+    /**
+     * 仅在非android环境下生效，android环境不支持基于反射的包扫描；
+     */
+    private static void register() {
+        for (Class<?> c : new Reflections("com.xihua.easymqtt.service").getTypesAnnotatedWith(MService.class)) {
             if (c.isAnnotationPresent(MService.class)) {
                 for (Class<?> anInterface : c.getInterfaces()) {
                     if (anInterface.equals(HandlerInterface.class)) {
@@ -46,6 +50,16 @@ public class MessageDispatcher {
                 }
             }
         }
+    }
+
+    public void register(Class<? extends HandlerInterface> handlerClass) {
+        MService annotation = handlerClass.getAnnotation(MService.class);
+        if (annotation == null) {
+            logger.warn("handler [{}] doesn't has annotation MService, skip register.", handlerClass);
+            return;
+        }
+        HANDLER_MAP.put(annotation.api(), handlerClass);
+        logger.info("api [" + annotation.api() + "] bounded handler [" + handlerClass.getName() + "] registered.");
     }
 
     public void dispatch(Message message) {
@@ -68,6 +82,7 @@ public class MessageDispatcher {
                 response = new Message(message.getReqId(), message.getTargetTopic(),
                         message.getSourceTopic(), MsgTypeEnum.RESPONSE.getMsgType(), message.getApi(), respParams);
             } catch (InstantiationException | IllegalAccessException e) {
+                logger.error("handler init error: " + e);
                 throw new RuntimeException(e);
             } catch (Throwable e) {
                 logger.error("handle request error: " + e);

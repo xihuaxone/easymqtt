@@ -1,4 +1,4 @@
-package com.xihua.easyctl.enums;
+package com.xihua.easymqtt.enums;
 
 public enum MsgTypeEnum {
     REQUEST("1"),

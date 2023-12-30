@@ -1,6 +1,6 @@
-package com.xihua.easyctl.common;
+package com.xihua.easymqtt.common;
 
-import com.xihua.easyctl.domain.Message;
+import com.xihua.easymqtt.domain.Message;
 
 import java.util.concurrent.FutureTask;
 
