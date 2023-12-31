@@ -87,7 +87,7 @@ public class MqttService {
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setConnectionTimeout(3);
         connOpts.setAutomaticReconnect(true);
-        connOpts.setKeepAliveInterval(60);
+        connOpts.setKeepAliveInterval(10);
         connOpts.setCleanSession(true);
         if (username != null) {
             connOpts.setUserName(username);
