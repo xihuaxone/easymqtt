@@ -49,7 +49,20 @@ public class MqttService {
         return INSTANCE_MAP.get(key);
     }
 
-    public void registerHandler(Class<? extends HandlerInterface> handlerClass) {
+    protected boolean close(String brokerHost, String topic) throws MqttException {
+        if (this.client != null) {
+            synchronized (MqttService.class) {
+                if (this.client != null) {
+                    this.client.disconnect();
+                    this.client.close();
+                    return INSTANCE_MAP.remove(getKey(brokerHost, topic)) != null;
+                }
+            }
+        }
+        return true;
+    }
+
+    protected void registerHandler(Class<? extends HandlerInterface> handlerClass) {
         dispatcher.register(handlerClass);
     }
 

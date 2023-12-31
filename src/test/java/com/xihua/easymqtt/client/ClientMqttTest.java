@@ -22,7 +22,7 @@ public class ClientMqttTest {
         List<String> params = new ArrayList<>();
         params.add("req");
         params.add("send");
-        Message resp = mClient.call("/cli/2", "/test", params);
+        Message resp = mClient.call("/cli/2", "/time/gmt+8/query", params);
         logger.info("call response = " + JSON.toJSONString(resp));
 
         while (true) {

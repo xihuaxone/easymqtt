@@ -6,6 +6,7 @@ import com.xihua.easymqtt.enums.MsgTypeEnum;
 import com.xihua.easymqtt.exceptions.MWaitResonseException;
 import com.xihua.easymqtt.exceptions.MqttServerConnectException;
 import com.xihua.easymqtt.service.HandlerInterface;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,15 @@ public class MClient {
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
             logger.error("call remote error: " + e);
             throw new MWaitResonseException(e);
+        }
+    }
+
+    public boolean close() {
+        try {
+            return service.close(brokerHost, sourceTopic);
+        } catch (MqttException e) {
+            logger.error("close mqtt error: ", e);
+            return false;
         }
     }
 
