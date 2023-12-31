@@ -26,16 +26,16 @@ public class MClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MClient.class);
 
-    public MClient(String brokerHost, String sourceTopic) throws MqttServerConnectException {
+    public MClient(String brokerHost, String sourceTopic, String persistenceDir) throws MqttServerConnectException {
         this.brokerHost = brokerHost;
         this.sourceTopic = sourceTopic;
-        service = MqttService.getInstance(brokerHost, sourceTopic, null, null);
+        service = MqttService.getInstance(brokerHost, sourceTopic, null, null, persistenceDir);
     }
 
-    public MClient(String brokerHost, String sourceTopic, String username, String password, Object... args) throws MqttServerConnectException {
+    public MClient(String brokerHost, String sourceTopic, String username, String password, String persistenceDir, Object... args) throws MqttServerConnectException {
         this.brokerHost = brokerHost;
         this.sourceTopic = sourceTopic;
-        service = MqttService.getInstance(brokerHost, sourceTopic, username, password, args);
+        service = MqttService.getInstance(brokerHost, sourceTopic, username, password, persistenceDir, args);
     }
 
     public MClient registerHandler(Class<? extends HandlerInterface> handlerClass) {

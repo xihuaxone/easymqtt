@@ -7,7 +7,7 @@ import com.xihua.easymqtt.exceptions.MqttServerConnectException;
 import com.xihua.easymqtt.service.HandlerInterface;
 import com.xihua.easymqtt.utils.MqttMessageUtil;
 import org.eclipse.paho.client.mqttv3.*;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +35,13 @@ public class MqttService {
         return brokerHost + topic;
     }
 
-    protected static MqttService getInstance(String brokerHost, String topic, @Nullable String username, @Nullable String password, Object... args) throws MqttServerConnectException {
+    protected static MqttService getInstance(String brokerHost, String topic, @Nullable String username, @Nullable String password, String persistenceDir, Object... args) throws MqttServerConnectException {
         String key = getKey(brokerHost, topic);
         if (!INSTANCE_MAP.containsKey(key)) {
             synchronized (MqttService.class) {
                 if (!INSTANCE_MAP.containsKey(key)) {
                     MqttService instance = new MqttService();
-                    instance.init(brokerHost, topic, username, password);
+                    instance.init(brokerHost, topic, username, password, persistenceDir);
                     INSTANCE_MAP.put(key, instance);
                 }
             }
@@ -55,6 +55,7 @@ public class MqttService {
                 if (this.client != null) {
                     this.client.disconnect();
                     this.client.close();
+                    this.client = null;
                     return INSTANCE_MAP.remove(getKey(brokerHost, topic)) != null;
                 }
             }
@@ -66,11 +67,13 @@ public class MqttService {
         dispatcher.register(handlerClass);
     }
 
-    private void init(String brokerHost, String topic, @Nullable String username, @Nullable String password, Object... args) throws MqttServerConnectException {
-        //  持久化
-        MemoryPersistence persistence = new MemoryPersistence();
+    private void init(String brokerHost, String topic, @Nullable String username, @Nullable String password, String persistenceDir, Object... args) throws MqttServerConnectException {
+        MqttDefaultFilePersistence persistence = new MqttDefaultFilePersistence(persistenceDir);
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setConnectionTimeout(10);
+        connOpts.setAutomaticReconnect(true);
+        connOpts.setKeepAliveInterval(60);
+        connOpts.setCleanSession(true);
         if (username != null) {
             connOpts.setUserName(username);
         }
@@ -80,9 +83,8 @@ public class MqttService {
 
         try {
             client = new MqttClient(brokerHost, MqttClient.generateClientId(), persistence);
-            // 设置回调
             client.setCallback(new MqttReceiverCallback(dispatcher));
-            // 建立连接
+            client.setTimeToWait(10 * 1000);
             logger.info("Connecting to broker: " + brokerHost);
             client.connect(connOpts);
             logger.info("Connected to broker: " + brokerHost);

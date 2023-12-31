@@ -13,7 +13,7 @@ public class ClientMqttTest2 {
 
     @Test
     public void test() throws MqttServerConnectException {
-        MClient client = new MClient("tcp://192.168.1.4:1883", "/cli/2", "root", "13241324");
+        MClient client = new MClient("tcp://192.168.1.4:1883", "/cli/2", "root", "13241324", "./");
 
         client.registerHandler(Handler.class);
         while (true) {
