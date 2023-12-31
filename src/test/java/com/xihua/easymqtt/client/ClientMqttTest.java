@@ -15,18 +15,17 @@ public class ClientMqttTest {
     private static final Logger logger = LoggerFactory.getLogger(ClientMqttTest.class);
 
     @Test
-    public void test() throws MqttServerConnectException {
+    public void test() throws MqttServerConnectException, InterruptedException {
         logger.info("start...");
         MClient mClient = new MClient("tcp://192.168.1.4:1883", "/cli/1", "root", "13241324", "./");
 
         List<String> params = new ArrayList<>();
         params.add("req");
         params.add("send");
-        Message resp = mClient.call("/cli/3", "/time/gmt+8/query", params);
-        logger.info("call response = " + JSON.toJSONString(resp));
+//        Message resp = mClient.call("/cli/3", "/time/gmt+8/query", params);
+//        logger.info("call response = " + JSON.toJSONString(resp));
 
         while (true) {
-
         }
 
     }

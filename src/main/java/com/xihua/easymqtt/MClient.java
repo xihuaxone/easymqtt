@@ -57,7 +57,7 @@ public class MClient {
 
     public boolean close() {
         try {
-            return service.close(brokerHost, sourceTopic);
+            return service.close();
         } catch (MqttException e) {
             logger.error("close mqtt error: ", e);
             return false;
