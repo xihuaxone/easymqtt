@@ -19,7 +19,7 @@
         </encoder>
     </appender>
 
-    <root level="All">
+    <root level="INFO">
         <appender-ref ref="consoleAppender"/>
         <appender-ref ref="fileAppender"/>
     </root>
