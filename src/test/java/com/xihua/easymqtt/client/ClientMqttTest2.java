@@ -24,7 +24,7 @@ public class ClientMqttTest2 {
     @MService(api = "/test")
     public static class Handler implements HandlerInterface {
         @Override
-        public List<String> handle(List<String> params) {
+        public List<Object> handle(List<Object> params) {
             return Collections.singletonList("ok");
         }
     }

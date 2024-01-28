@@ -9,7 +9,7 @@ import java.util.List;
 @MService(api = "/hello")
 public class HelloHandler implements HandlerInterface {
     @Override
-    public List<String> handle(List<String> params) {
+    public List<Object> handle(List<Object> params) {
         return Arrays.asList("hello too");
     }
 }

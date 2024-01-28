@@ -19,14 +19,16 @@ public class ClientMqttTest {
         logger.info("start...");
         MClient mClient = new MClient("tcp://192.168.1.7:1883", "/cli/1", "root", "13241324", "./");
 
-        List<String> params = new ArrayList<>();
-        params.add("req");
-        params.add("send");
-        Message resp = mClient.call("/tmn/13392590", "/healthcheck", params);
-        logger.info("call response = " + JSON.toJSONString(resp));
+        List<Object> params = new ArrayList<>();
+        params.add(false);
 
-        while (true) {
-        }
+//        Message resp1 = mClient.call("/tmn/14444547", "/light/step", params);
+        Message resp1 = mClient.call("/tmn/14444547", "/light/on", params);
+        logger.info("call response = " + JSON.toJSONString(resp1));
+
+
+//        while (true) {
+//        }
 
     }
 }

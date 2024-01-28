@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Consumer;
 
 public class MessageDispatcher {
     private final RequestManager requestManager = new RequestManager();
@@ -78,7 +77,7 @@ public class MessageDispatcher {
             Class<? extends HandlerInterface> handler = HANDLER_MAP.getOrDefault(api, DefaultHandler.class);
             Message response;
             try {
-                List<String> respParams = handler.newInstance().handle(message.getParams());
+                List<Object> respParams = handler.newInstance().handle(message.getParams());
                 response = new Message(message.getReqId(), message.getTargetTopic(),
                         message.getSourceTopic(), MsgTypeEnum.RESPONSE.getMsgType(), message.getApi(), respParams);
             } catch (InstantiationException | IllegalAccessException e) {
@@ -101,7 +100,7 @@ public class MessageDispatcher {
 
     static class DefaultHandler implements HandlerInterface {
         @Override
-        public List<String> handle(List<String> params) {
+        public List<Object> handle(List<Object> params) {
             return new ArrayList<>(0);
         }
     }

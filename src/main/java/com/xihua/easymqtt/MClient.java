@@ -43,7 +43,7 @@ public class MClient {
         return this;
     }
 
-    public Message call(String targetTopic, String api, List<String> params) {
+    public Message call(String targetTopic, String api, List<Object> params) {
         ReqFuture future = service.send(new Message(generateReqId(), sourceTopic, targetTopic,
                 MsgTypeEnum.REQUEST.getMsgType(), api, params));
 

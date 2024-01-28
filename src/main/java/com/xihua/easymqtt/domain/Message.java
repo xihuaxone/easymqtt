@@ -22,5 +22,5 @@ public class Message {
 
     private String api;
 
-    private List<String> params;
+    private List<Object> params;
 }
