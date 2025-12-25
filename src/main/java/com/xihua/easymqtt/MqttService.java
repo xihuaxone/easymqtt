@@ -6,7 +6,6 @@ import com.xihua.easymqtt.enums.MsgTypeEnum;
 import com.xihua.easymqtt.exceptions.MqttServerConnectException;
 import com.xihua.easymqtt.service.HandlerInterface;
 import com.xihua.easymqtt.utils.MqttMessageUtil;
-import javafx.util.Callback;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
@@ -85,10 +84,11 @@ public class MqttService {
     private void init() throws MqttServerConnectException {
         MqttDefaultFilePersistence persistence = new MqttDefaultFilePersistence(persistenceDir);
         MqttConnectOptions connOpts = new MqttConnectOptions();
-        connOpts.setConnectionTimeout(3);
+        connOpts.setConnectionTimeout(30);
         connOpts.setAutomaticReconnect(true);
-        connOpts.setKeepAliveInterval(10);
+        connOpts.setKeepAliveInterval(60);
         connOpts.setCleanSession(true);
+        connOpts.setMaxInflight(10);
         if (username != null) {
             connOpts.setUserName(username);
         }
